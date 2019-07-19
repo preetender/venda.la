@@ -2,7 +2,9 @@
  * Listar produtos
  */
 export const findAll = async (page = 1, perPage = 6) =>
-  await axios.get(`api/products/?page=${page}&perPage=${perPage}`)
+  await axios.get(
+    `api/products/?page=${page}&paginate=${perPage}&with[children]=*&orderBy[kit]=desc`
+  )
 
 /**
  * Consulta

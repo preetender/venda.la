@@ -60,20 +60,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Product",
   props: {
@@ -104,6 +90,56 @@ __webpack_require__.r(__webpack_exports__);
 
         return images.hasOwnProperty(size) ? images[size] : images["original"];
       };
+    },
+    childrenImages: function childrenImages() {
+      var _this2 = this;
+
+      var images = [];
+
+      if (this.item.images.length > 0) {
+        // primeira camada de imagens do produto.
+        images.push(this.images);
+      }
+
+      this.item.children.forEach(function (child) {
+        // capturar imagem de produtos filhos.
+        images = Array.prototype.concat(images, _this2.childImageRecursive(child));
+      });
+      return images;
+    }
+  },
+  methods: {
+    /**
+     * Varrer produtos filhos e obter todas as imagens.
+     *
+     * @returns array
+     */
+    childImageRecursive: function childImageRecursive(child) {
+      var _this3 = this;
+
+      var images = []; //
+
+      if (child.images.length > 0) {
+        images.push(child.images);
+      } //
+
+
+      if (child.kit) {
+        child.children.forEach(function (item) {
+          if (item.images.length > 0) {
+            //
+            images.push(item.images);
+          }
+
+          if (item.kit) {
+            //
+            images = Array.prototype.concat(images, _this3.childImageRecursive(item));
+          }
+        });
+      } //
+
+
+      return images;
     }
   }
 });
@@ -135,7 +171,7 @@ var render = function() {
             _c(
               "v-card",
               {
-                staticClass: "mx-auto",
+                staticClass: "mx-auto py-2",
                 staticStyle: { position: "relative" },
                 attrs: { tile: "", elevation: hover ? 12 : 2 }
               },
@@ -185,7 +221,13 @@ var render = function() {
                     })
                   : _c(
                       "v-carousel",
-                      { attrs: { height: "256", cycle: "" } },
+                      {
+                        attrs: {
+                          height: "256",
+                          cycle: "",
+                          "hide-delimiter-background": ""
+                        }
+                      },
                       _vm._l(_vm.item.children, function(child, index) {
                         return _c(
                           "v-carousel-item",
@@ -221,27 +263,6 @@ var render = function() {
                           ? _c(
                               "v-btn",
                               {
-                                key: "view-" + _vm.item.id,
-                                staticClass: "white--text",
-                                staticStyle: { right: "85px" },
-                                attrs: {
-                                  absolute: "",
-                                  color: "orange",
-                                  fab: "",
-                                  large: "",
-                                  right: "",
-                                  top: ""
-                                }
-                              },
-                              [_c("v-icon", [_vm._v("mdi-eye")])],
-                              1
-                            )
-                          : _vm._e(),
-                        _vm._v(" "),
-                        hover
-                          ? _c(
-                              "v-btn",
-                              {
                                 key: "remove-" + _vm.item.id,
                                 staticClass: "white--text",
                                 attrs: {
@@ -251,6 +272,11 @@ var render = function() {
                                   large: "",
                                   right: "",
                                   top: ""
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.$emit("remove", _vm.item.id)
+                                  }
                                 }
                               },
                               [_c("v-icon", [_vm._v("mdi-delete")])],

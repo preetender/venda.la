@@ -1,8 +1,12 @@
 <template>
-  <v-container grid-list-xs fluid>
+  <v-container grid-list-xs fluid fill-height>
     <v-layout row wrap v-if="products.length > 0">
       <v-flex v-for="(product, index) in products" :key="index" xs4 d-flex class="pa-3">
-        <product :item="product" />
+        <product :item="product" @remove="forgetProductById" />
+      </v-flex>
+
+      <v-flex xs12 class="text-xs-center">
+        <v-pagination :length="links" v-model="page" circle x-large color="orange"></v-pagination>
       </v-flex>
     </v-layout>
 
@@ -18,7 +22,7 @@
 </template>
 
 <script>
-import { findAll } from "../services/products";
+import { findAll, destroy } from "../services/products";
 import { setTimeout } from "timers";
 export default {
   name: "Home",
@@ -29,21 +33,64 @@ export default {
 
   data: () => ({
     page: 1,
-    perPage: 6,
+    perPage: 3,
     loading: false,
-    products: []
+    products: [],
+    meta: {}
   }),
+
+  computed: {
+    links() {
+      //
+      if (_.isEmpty(this.meta)) return 0;
+      //
+      return _.ceil(this.meta.total / this.perPage);
+    }
+  },
+
+  watch: {
+    async page() {
+      //
+      await this.ready();
+    }
+  },
 
   methods: {
     /**
-     * Carregar
+     * Carregar produtos.
+     *
+     * @returns
      */
     async ready() {
       this.loading = true;
 
       await findAll(this.page, this.perPage)
-        .then(({ data }) => (this.products = data))
+        .then(({ data: { data, meta } }) => {
+          this.products = data;
+          this.meta = meta;
+        })
         .finally(() => (this.loading = false));
+    },
+
+    /**
+     * Remover produto
+     *
+     * @param product_id
+     */
+    async forgetProductById(product_id) {
+      //
+      let index = _.findIndex(
+        this.products,
+        product => product.id === product_id
+      );
+
+      await destroy(product_id)
+        .then(({ data }) => {
+          //
+          alert(data);
+          //
+          this.products.splice(index, 1);
+        })
     }
   },
 
@@ -53,3 +100,13 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.v-pagination__item {
+  &:focus {
+    outline: 0;
+    border-color: none;
+    box-shadow: none;
+  }
+}
+</style>

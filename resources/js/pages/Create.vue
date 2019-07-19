@@ -33,7 +33,7 @@
             <!-- end: input -->
 
             <!-- begin: input -->
-            <v-text-field label="Preço" v-model.trim="form.price" type="number" min="0" />
+            <v-text-field label="Preço" v-model.trim="form.price" />
             <!-- end: input -->
 
             <!-- begin: input-file -->
@@ -93,9 +93,8 @@
                   <v-input>
                     <input v-model="child.quantity" readonly class="native text-xs-center" />
                     <template v-slot:prepend>
-                      <v-icon @click="(child.quantity > 0 ? child.quantity-- : null)">mdi-minus</v-icon>
+                      <v-icon @click="(child.quantity > 1 ? child.quantity-- : null)">mdi-minus</v-icon>
                     </template>
-
                     <template v-slot:append>
                       <v-icon @click="child.quantity++">mdi-plus</v-icon>
                     </template>
@@ -104,6 +103,35 @@
               </v-list-item>
             </v-list>
             <!-- end: editor-product-child -->
+
+            <!-- begin: categorias -->
+            <v-card flat color="transparent">
+              <v-sheet class="pa-2 primary accent-2">
+                <v-text-field
+                  v-model="search"
+                  label="Filtrar categorias"
+                  dark
+                  flat
+                  solo-inverted
+                  hide-details
+                  clearable
+                  clear-icon="mdi-close-circle-outline"
+                />
+              </v-sheet>
+
+              <v-card-text>
+                <v-treeview
+                  activatable
+                  transition
+                  color="orange darken-2"
+                  :active.sync="categoriesActive"
+                  :search="search"
+                  :items="categories"
+                  :load-children="categoriaFilhos"
+                ></v-treeview>
+              </v-card-text>
+            </v-card>
+            <!-- end: categorias -->
 
             <!-- begin: input -->
             <v-textarea label="Descrição do produto" v-model.trim="form.description" counter />
@@ -118,6 +146,10 @@
 
 <script>
 import { store, query as productQuery } from "../services/products";
+import {
+  categorias as mlb_categorias,
+  subcategorias as mlb_subcategorias
+} from "../services/mercado_livre";
 import { setTimeout } from "timers";
 import { format } from "path";
 export default {
@@ -125,7 +157,10 @@ export default {
 
   data: () => ({
     loading: false,
+    search: null,
     products: [],
+    categories: [],
+    categoriesActive: [],
     form: {
       name: "",
       price: 0,
@@ -133,7 +168,7 @@ export default {
       images: [],
       children: [],
       kit: false,
-      category_id: "MBL001"
+      category_id: null
     }
   }),
 
@@ -143,6 +178,14 @@ export default {
         //
         await this.readyProducts();
       }
+    }
+  },
+
+  computed: {
+    categoryId() {
+      if (this.categoriesActive.length <= 0) return null;
+      //
+      return this.categoriesActive[0];
     }
   },
 
@@ -157,7 +200,7 @@ export default {
       //
       form.kit = form.kit ? 1 : 0;
 
-      const {
+      let {
           name,
           price,
           description,
@@ -167,6 +210,13 @@ export default {
           children
         } = form,
         formData = new FormData();
+
+      if (!this.categoryId) {
+        alert("Selecione a categoria.");
+      } else {
+        //
+        category_id = this.categoryId;
+      }
 
       formData.append("name", name);
       formData.append("price", price);
@@ -199,6 +249,7 @@ export default {
     /**
      * Redefinir estado inicial do formulario.
      *
+     * @returns void
      */
     reset() {
       this.form = {
@@ -218,17 +269,61 @@ export default {
     async readyProducts() {
       this.loading = true;
 
-      await productQuery(`where[kit]=0`)
+      await productQuery("orderBy[price]=asc")
         .then(({ data }) => {
           this.products = data.map(h => {
             // anexar novo campo
-            h.quantity = 0;
+            h.quantity = 1;
             //
             return h;
           });
         })
         .finally(() => (this.loading = false));
+    },
+
+    /**
+     * Carregar categorias.
+     *
+     *
+     */
+    async categorias() {
+      await mlb_categorias().then(response => {
+        //
+        const { data } = response;
+        //
+        this.categories = data.map(category => {
+          //
+          category.children = [];
+          //
+          return category;
+        });
+      });
+    },
+
+    /**
+     * @param category
+     */
+    async categoriaFilhos(category) {
+      //
+      let item = _.find(this.categories, cat => cat.id === category.id);
+      //
+      if (!item) return [];
+      //
+      await mlb_subcategorias(category.id).then(({ data }) => {
+        //
+        item.children = data.children_categories.map(category => {
+          //
+          // category.children = [];
+          //
+          return category;
+        });
+      });
     }
+  },
+
+  async mounted() {
+    // carregar categorias mercado livre brasil.
+    await this.categorias();
   }
 };
 </script>

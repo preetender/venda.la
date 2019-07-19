@@ -7,6 +7,7 @@ use App\Http\Resources\ProductResource;
 use Preetender\QueryString\ApiController;
 use App\Http\Requests\StoreProductRequest;
 use App\Support\Upload;
+use Illuminate\Support\Facades\DB;
 
 class MainController extends ApiController
 {
@@ -28,7 +29,7 @@ class MainController extends ApiController
   protected $modelNewInstance = true;
 
   /**
-   * Cadastrar produto.
+   * Cadastrar produto, imagens e vincular produtos filhos.
    *
    * @param StoreProductRequest $request
    */
@@ -92,8 +93,25 @@ class MainController extends ApiController
   }
 
   /**
-   * Remover produto.
+   * Remover produto e arquivos referentes ao produto.
+   *
+   * @param Product $product
    */
-  public function destroy()
-  { }
+  public function destroy(Product $product)
+  {
+    return DB::transaction(function () use ($product) {
+      //
+      $product->delete();
+
+      //
+      $product->images->each(function ($image) {
+        if (app('filesystem')->isDirectory($image->file)) {
+          // remover diretorio de imagens
+          app("filesystem")->deleteDirectory($image->file);
+        }
+      });
+
+      return response()->json('Produto removido com sucesso.');
+    });
+  }
 }

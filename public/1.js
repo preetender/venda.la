@@ -261,6 +261,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     /**
      * Redefinir estado inicial do formulario.
      *
+     * @returns void
      */
     reset: function reset() {
       this.form = {
@@ -289,7 +290,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 this.loading = true;
                 _context3.next = 3;
-                return Object(_services_products__WEBPACK_IMPORTED_MODULE_1__["query"])("where[kit]=0").then(function (_ref) {
+                return Object(_services_products__WEBPACK_IMPORTED_MODULE_1__["query"])("orderBy[price]=asc").then(function (_ref) {
                   var data = _ref.data;
                   _this2.products = data.map(function (h) {
                     // anexar novo campo
@@ -891,7 +892,7 @@ function () {
             page = _args.length > 0 && _args[0] !== undefined ? _args[0] : 1;
             perPage = _args.length > 1 && _args[1] !== undefined ? _args[1] : 6;
             _context.next = 4;
-            return axios.get("api/products/?page=".concat(page, "&perPage=").concat(perPage));
+            return axios.get("api/products/?page=".concat(page, "&perPage=").concat(perPage, "&with[children]=*&orderBy[kit]=desc"));
 
           case 4:
             return _context.abrupt("return", _context.sent);

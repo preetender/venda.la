@@ -3,8 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Preetender\QueryString\ApiResource;
 
-class ProductResource extends JsonResource
+class ProductResource extends ApiResource
 {
   /**
    * Transform the resource into an array.
@@ -23,12 +24,12 @@ class ProductResource extends JsonResource
       'slug' => str_slug($this->name),
       'description' => $this->description,
       'images' => $this->whenLoaded('images', ProductImageResource::collection($this->images), []),
-      'children' => $this->when($this->kit, function () {
+      'children' => $this->whenQueryParam('with,children', $this->when($this->kit, function () {
         // carregar produtos filhos.
         $this->load('children');
         //
         return ProductResource::collection($this->children);
-      }),
+      })),
       'dates' => [
         'created_at' => $this->created_at,
         'updated_at' => $this->updated_at

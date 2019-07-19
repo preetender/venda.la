@@ -1,6 +1,6 @@
 <template>
   <v-hover v-slot:default="{ hover }">
-    <v-card tile class="mx-auto" style="position: relative;" :elevation="hover ? 12 : 2">
+    <v-card tile class="mx-auto py-2" style="position: relative;" :elevation="hover ? 12 : 2">
       <v-img :src="image(256)" :lazy-src="image(10)" height="256" contain v-if="!item.kit">
         <template v-slot:placeholder>
           <v-layout fill-height align-center justify-center ma-0>
@@ -9,7 +9,7 @@
         </template>
       </v-img>
 
-      <v-carousel v-else height="256" cycle>
+      <v-carousel v-else height="256" cycle hide-delimiter-background>
         <v-carousel-item v-for="(child,index) in item.children" :key="index">
           <v-img
             :src="child.images[0].breakpoints[256]"
@@ -24,29 +24,15 @@
         <v-slide-x-reverse-transition group>
           <v-btn
             absolute
-            color="orange"
-            class="white--text"
-            fab
-            large
-            right
-            top
-            v-if="hover"
-            :key="'view-'+item.id"
-            style="right: 85px;"
-          >
-            <v-icon>mdi-eye</v-icon>
-          </v-btn>
-
-          <v-btn
-            absolute
             color="error"
             class="white--text"
             fab
             large
             right
             top
-            v-if="hover"
             :key="'remove-'+item.id"
+            @click="$emit('remove', item.id)"
+            v-if="hover"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -89,10 +75,62 @@ export default {
           return require("../assets/default.png");
         }
         const images = this.images[0].breakpoints;
-
         //
         return images.hasOwnProperty(size) ? images[size] : images["original"];
       };
+    },
+
+    childrenImages() {
+      let images = [];
+
+      if (this.item.images.length > 0) {
+        // primeira camada de imagens do produto.
+        images.push(this.images);
+      }
+
+      this.item.children.forEach(child => {
+        // capturar imagem de produtos filhos.
+        images = Array.prototype.concat(
+          images,
+          this.childImageRecursive(child)
+        );
+      });
+
+      return images;
+    }
+  },
+
+  methods: {
+    /**
+     * Varrer produtos filhos e obter todas as imagens.
+     *
+     * @returns array
+     */
+    childImageRecursive(child) {
+      let images = [];
+      //
+      if (child.images.length > 0) {
+        images.push(child.images);
+      }
+      //
+      if (child.kit) {
+        child.children.forEach(item => {
+          if (item.images.length > 0) {
+            //
+            images.push(item.images);
+          }
+
+          if (item.kit) {
+            //
+            images = Array.prototype.concat(
+              images,
+              this.childImageRecursive(item)
+            );
+          }
+        });
+      }
+      //
+      return images;
     }
   }
 };
