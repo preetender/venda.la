@@ -1,19 +1,14 @@
-// Body
-$body-bg: #f8fafc;
+@import "~vuetify/src/styles/styles.sass";
 
-// Typography
-$font-family-sans-serif: 'Nunito', sans-serif;
-$font-size-base: 0.9rem;
-$line-height-base: 1.6;
+// The variables you want to modify
+$font-size-root: 14px;
 
-// Colors
-$blue: #3490dc;
-$indigo: #6574cd;
-$purple: #9561e2;
-$pink: #f66d9b;
-$red: #e3342f;
-$orange: #f6993f;
-$yellow: #ffed4a;
-$green: #38c172;
-$teal: #4dc0b5;
-$cyan: #6cb2eb;
+// For updating SASS lists
+$material-light: map-merge(
+    $material-light,
+    (
+        cards: #f14911
+    )
+);
+
+$btn-border-radius: 0px;
