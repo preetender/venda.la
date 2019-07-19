@@ -5,6 +5,13 @@ export const findAll = async (page = 1, perPage = 6) =>
   await axios.get(`api/products/?page=${page}&perPage=${perPage}`)
 
 /**
+ * Consulta
+ *
+ * @param {*} query
+ */
+export const query = async (query) => await axios.get(`api/products/?${query}`)
+
+/**
  * Cadastrar produto
  *
  * @param {*} data

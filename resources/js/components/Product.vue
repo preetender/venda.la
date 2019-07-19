@@ -1,11 +1,7 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-card tile class="mx-auto" style="position: relative;" :elevation="hover ? 12 : 2">
-      <v-img
-        :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-        :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
-        height="240"
-      >
+      <v-img :src="image(256)" :lazy-src="image(10)" height="240" contain>
         <template v-slot:placeholder>
           <v-layout fill-height align-center justify-center ma-0>
             <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
@@ -24,7 +20,7 @@
             right
             top
             v-if="hover"
-            :key="'view-'+index"
+            :key="'view-'+item.id"
             style="right: 85px;"
           >
             <v-icon>mdi-eye</v-icon>
@@ -39,18 +35,18 @@
             right
             top
             v-if="hover"
-            :key="'remove-'+index"
+            :key="'remove-'+item.id"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </v-slide-x-reverse-transition>
       </v-card-text>
 
-      <v-card-title>nome do produto</v-card-title>
+      <v-card-title>{{ item.name }}</v-card-title>
 
       <v-card-text>
-        <div class="my-3 subtitle-1 black--text">$ 00.00 • Categoria</div>
-        <div>Conteudo</div>
+        <div class="my-3 subtitle-1 black--text">R$ {{ item.price }} • {{ item.category_id }}</div>
+        <div>{{ item.description }}</div>
       </v-card-text>
     </v-card>
   </v-hover>
@@ -64,6 +60,28 @@ export default {
     item: {
       type: Object,
       required: true
+    }
+  },
+
+  computed: {
+    images() {
+      return this.item.images;
+    },
+
+    image() {
+      return (size = 10) => {
+        //
+        if (this.images.length <= 0) {
+          //
+          if (size === 10) return require("../assets/default-lazy.png");
+          //
+          return require("../assets/default.png");
+        }
+        const images = this.images[0].breakpoints;
+
+        //
+        return images.hasOwnProperty(size) ? images[size] : images["original"];
+      };
     }
   }
 };

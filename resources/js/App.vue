@@ -22,7 +22,7 @@
 
       <v-content>
         <v-slide-x-transition mode="out-in">
-          <component :is="page" />
+          <component :is="page" @page="page = $event" />
         </v-slide-x-transition>
       </v-content>
 

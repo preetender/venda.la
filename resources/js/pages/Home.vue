@@ -5,6 +5,15 @@
         <product :item="product" />
       </v-flex>
     </v-layout>
+
+    <v-layout column v-else fill-height align-center>
+      <v-flex>
+        <v-card flat>
+          Não existem produtos cadastrados em nosso sistema.
+          <v-btn @click="$emit('page', 'cadastro')" text class="mr-1">Clique aqui</v-btn>e cadastre.
+        </v-card>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
