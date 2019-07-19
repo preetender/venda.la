@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Product;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,3 +14,19 @@
 */
 
 Route::view('/', 'app');
+
+Route::get('/test', function () {
+    // $product = App\Models\Product::find(4);
+    // $product->load('compositions');
+    // // dd($product);
+
+    // return $product;
+
+    return Product::all()->map(function ($product) {
+        if ($product->kit) {
+            $product->load('children');
+        }
+
+        return $product;
+    });
+});
