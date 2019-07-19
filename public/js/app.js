@@ -2017,10 +2017,10 @@ __webpack_require__.r(__webpack_exports__);
   name: "Venda.la",
   components: {
     inicio: function inicio() {
-      return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(0)]).then(__webpack_require__.bind(null, /*! ./pages/Home */ "./resources/js/pages/Home.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(3)]).then(__webpack_require__.bind(null, /*! ./pages/Home */ "./resources/js/pages/Home.vue"));
     },
     cadastro: function cadastro() {
-      return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(4)]).then(__webpack_require__.bind(null, /*! ./pages/Create */ "./resources/js/pages/Create.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(4), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./pages/Create */ "./resources/js/pages/Create.vue"));
     }
   },
   data: function data() {
@@ -19694,7 +19694,16 @@ var render = function() {
               _c(
                 "v-slide-x-transition",
                 { attrs: { mode: "out-in" } },
-                [_c(_vm.page, { tag: "component" })],
+                [
+                  _c(_vm.page, {
+                    tag: "component",
+                    on: {
+                      page: function($event) {
+                        _vm.page = $event
+                      }
+                    }
+                  })
+                ],
                 1
               )
             ],

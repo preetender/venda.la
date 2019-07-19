@@ -1,13 +1,24 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-card tile class="mx-auto" style="position: relative;" :elevation="hover ? 12 : 2">
-      <v-img :src="image(256)" :lazy-src="image(10)" height="240" contain>
+      <v-img :src="image(256)" :lazy-src="image(10)" height="256" contain v-if="!item.kit">
         <template v-slot:placeholder>
           <v-layout fill-height align-center justify-center ma-0>
             <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
           </v-layout>
         </template>
       </v-img>
+
+      <v-carousel v-else height="256" cycle>
+        <v-carousel-item v-for="(child,index) in item.children" :key="index">
+          <v-img
+            :src="child.images[0].breakpoints[256]"
+            :lazy-src="child.images[0].breakpoints[10]"
+            height="256"
+            contain
+          />
+        </v-carousel-item>
+      </v-carousel>
 
       <v-card-text style="position: relative;" class="pb-0">
         <v-slide-x-reverse-transition group>
