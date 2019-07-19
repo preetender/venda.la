@@ -41,8 +41,8 @@ export default {
   name: "Venda.la",
 
   components: {
-    inicio: () => import("./components/Home"),
-    cadastro: () => import("./components/Create")
+    inicio: () => import("./pages/Home"),
+    cadastro: () => import("./pages/Create")
   },
 
   data: () => ({

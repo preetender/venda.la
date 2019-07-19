@@ -2017,10 +2017,10 @@ __webpack_require__.r(__webpack_exports__);
   name: "Venda.la",
   components: {
     inicio: function inicio() {
-      return __webpack_require__.e(/*! import() */ 2).then(__webpack_require__.bind(null, /*! ./components/Home */ "./resources/js/components/Home.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(0)]).then(__webpack_require__.bind(null, /*! ./pages/Home */ "./resources/js/pages/Home.vue"));
     },
     cadastro: function cadastro() {
-      return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ./components/Create */ "./resources/js/components/Create.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(4)]).then(__webpack_require__.bind(null, /*! ./pages/Create */ "./resources/js/pages/Create.vue"));
     }
   },
   data: function data() {
