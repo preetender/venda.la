@@ -17,10 +17,12 @@ class ProductResource extends JsonResource
     return [
       'id' => $this->id,
       'name' => $this->name,
+      'price' => $this->price,
+      'category_id' => $this->category_id,
+      'kit' => $this->kit,
       'slug' => str_slug($this->name),
       'description' => $this->description,
       'images' => $this->whenLoaded('images', ProductImageResource::collection($this->images), []),
-      'kit' => $this->kit,
       'children' => $this->when($this->kit, function () {
         // carregar produtos filhos.
         $this->load('children');

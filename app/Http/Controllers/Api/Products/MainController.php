@@ -35,7 +35,9 @@ class MainController extends ApiController
   public function store(StoreProductRequest $request)
   {
     $db = app('db');
-
+    //
+    $images = [];
+    //
     try {
       $db->beginTransaction();
 
@@ -44,10 +46,12 @@ class MainController extends ApiController
       $product->save();
 
       // produtos filhos
-      //$product->children()->sync();
-
-      //
-      $images = [];
+      if ($request->has('children') && sizeof($request->children) > 0) {
+        // sincronizar filhos
+        foreach ($request->children as $id => $attributes) {
+          $product->children()->attach([$id => json_decode($attributes, true)]);
+        }
+      }
 
       if ($request->hasFile('images')) {
         foreach ($request->images as $image) {
@@ -65,7 +69,6 @@ class MainController extends ApiController
           ]);
         }
       }
-
       // autorizar transação
       $db->commit();
 
