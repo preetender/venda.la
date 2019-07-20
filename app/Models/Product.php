@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Support\ApiMercadoLivre;
 
 class Product extends Model
 {
@@ -31,7 +32,8 @@ class Product extends Model
    * @var array
    */
   protected $appends = [
-    'total'
+    'total',
+    'categoryDetails'
   ];
 
   /**
@@ -68,5 +70,20 @@ class Product extends Model
     return $this->belongsToMany(Product::class, 'child_product', 'product_id', 'child_id')
       ->using(ChildProduct::class)
       ->withPivot('quantity');
+  }
+
+  /**'
+   * Obter rótulo da categoria via api mercado livre.'
+   *
+   * @return string|null
+   */
+  public function getCategoryDetailsAttribute()
+  {
+    //
+    $id = $this->attributes['category_id'];
+    //
+    if (!$id) return null;
+    //
+    return ApiMercadoLivre::findById($id);
   }
 }

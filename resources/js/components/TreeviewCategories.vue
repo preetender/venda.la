@@ -3,7 +3,7 @@
     <v-sheet class="pa-2 primary accent-2">
       <v-text-field
         v-model="search"
-        label="Filtrar categorias"
+        label="Faça uma busca em categorias."
         dark
         flat
         solo-inverted
@@ -21,7 +21,7 @@
         :active.sync="active"
         :search="search"
         :items="categories"
-        :load-children="loadChildrenCategory"
+        :load-children="loadChildCategory"
         @update:active="$emit('category', $event[0])"
       ></v-treeview>
     </v-card-text>
@@ -29,59 +29,24 @@
 </template>
 
 <script>
-import {
-  categorias as mlb_categorias,
-  subcategorias as mlb_subcategorias
-} from "../services/mercado_livre";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   data: () => ({
     active: [],
-    categories: [],
     search: null,
     loading: false
   }),
 
-  methods: {
-    /**
-     * Carregar categorias.
-     */
-    async loadCategories() {
-      this.loading = true;
-      //
-      await mlb_categorias()
-        .then(response => {
-          //
-          const { data } = response;
-          //
-          this.categories = data.map(category => {
-            //
-            category.children = [];
-            //
-            return category;
-          });
-        })
-        .finally(() => (this.loading = false));
-    },
+  computed: mapGetters({
+    categories: "categories/all"
+  }),
 
-    /**
-     * Obter filhos de categoria.
-     *
-     * @param category
-     */
-    async loadChildrenCategory(category) {
-      //
-      let item = _.find(this.categories, cat => cat.id === category.id);
-      //
-      if (!item) return [];
-      //
-      await mlb_subcategorias(category.id).then(({ data }) => {
-        //
-        item.children = data.children_categories.map(category => {
-          //
-          return category;
-        });
-      });
-    }
+  methods: {
+    ...mapActions({
+      loadCategories: "categories/load-categories",
+      loadChildCategory: "categories/load-child-category"
+    })
   },
 
   async mounted() {
@@ -90,6 +55,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-</style>

@@ -11,6 +11,7 @@ window.Vue = require("vue")
 import App from "./App.vue"
 
 // plugins
+import store from "./store"
 import vuetify from "./plugins/vuetify"
 
 import "./plugins/vuelidate"
@@ -24,5 +25,6 @@ import "./plugins/vuelidate"
 const app = new Vue({
   el: "#app",
   vuetify,
+  store,
   render: (h) => h(App)
 })

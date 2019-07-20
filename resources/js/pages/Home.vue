@@ -1,5 +1,9 @@
 <template>
   <v-container grid-list-xs fluid fill-height>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate color="primary" size="96"></v-progress-circular>
+    </v-overlay>
+
     <v-layout row wrap v-if="products.length > 0">
       <v-flex xs12 class="pa-3">
         <v-toolbar flat color="grey" dark>

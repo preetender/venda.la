@@ -20,6 +20,7 @@ class ProductResource extends ApiResource
       'name' => $this->name,
       'price' => $this->price,
       'category_id' => $this->category_id,
+      'category_details' => $this->category_details,
       'kit' => $this->kit,
       'slug' => str_slug($this->name),
       'description' => $this->description,

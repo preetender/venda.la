@@ -12,11 +12,14 @@
       <v-carousel v-else height="256" cycle hide-delimiter-background>
         <v-carousel-item v-for="(child,index) in item.children" :key="index">
           <v-img
+            v-if="child.images[0]"
             :src="child.images[0].breakpoints[256]"
             :lazy-src="child.images[0].breakpoints[10]"
             height="256"
             contain
           />
+          <!--  -->
+          <v-img :lazy-src="lazyDefault" :src="defaultImage" v-else />
         </v-carousel-item>
       </v-carousel>
 
@@ -60,6 +63,11 @@ export default {
     }
   },
 
+  data: () => ({
+    lazyDefault: require("../assets/default-lazy.png"),
+    defaultImage: require("../assets/default.png")
+  }),
+
   computed: {
     images() {
       return this.item.images;
@@ -70,9 +78,9 @@ export default {
         //
         if (this.images.length <= 0) {
           //
-          if (size === 10) return require("../assets/default-lazy.png");
+          if (size === 10) return this.lazyDefault;
           //
-          return require("../assets/default.png");
+          return this.defaultImage;
         }
         const images = this.images[0].breakpoints;
         //
