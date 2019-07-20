@@ -1,6 +1,20 @@
 <template>
   <v-container grid-list-xs fluid fill-height>
     <v-layout row wrap v-if="products.length > 0">
+      <v-flex xs12 class="pa-3">
+        <v-toolbar flat color="grey" dark>
+          <v-toolbar-title>Exibindo {{ meta.from }} de {{ meta.to }} produtos</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-select
+            :items="[5, 10, 15, 50]"
+            v-model="perPage"
+            single-line
+            placeholder="Total por pagina"
+            hide-details
+            style="max-width: 150px;"
+          ></v-select>
+        </v-toolbar>
+      </v-flex>
       <v-flex v-for="(product, index) in products" :key="index" xs4 d-flex class="pa-3">
         <product :item="product" @remove="forgetProductById" />
       </v-flex>
@@ -33,7 +47,7 @@ export default {
 
   data: () => ({
     page: 1,
-    perPage: 3,
+    perPage: 5,
     loading: false,
     products: [],
     meta: {}
@@ -50,6 +64,10 @@ export default {
 
   watch: {
     async page() {
+      //
+      await this.ready();
+    },
+    async perPage() {
       //
       await this.ready();
     }
@@ -84,13 +102,12 @@ export default {
         product => product.id === product_id
       );
 
-      await destroy(product_id)
-        .then(({ data }) => {
-          //
-          alert(data);
-          //
-          this.products.splice(index, 1);
-        })
+      await destroy(product_id).then(({ data }) => {
+        //
+        alert(data);
+        //
+        this.products.splice(index, 1);
+      });
     }
   },
 

@@ -43,6 +43,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -55,7 +69,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       page: 1,
-      perPage: 3,
+      perPage: 5,
       loading: false,
       products: [],
       meta: {}
@@ -94,6 +108,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return page;
+    }(),
+    perPage: function () {
+      var _perPage = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return this.ready();
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function perPage() {
+        return _perPage.apply(this, arguments);
+      }
+
+      return perPage;
     }()
   },
   methods: {
@@ -105,15 +144,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     ready: function () {
       var _ready = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
         var _this = this;
 
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 this.loading = true;
-                _context2.next = 3;
+                _context3.next = 3;
                 return Object(_services_products__WEBPACK_IMPORTED_MODULE_1__["findAll"])(this.page, this.perPage).then(function (_ref) {
                   var _ref$data = _ref.data,
                       data = _ref$data.data,
@@ -126,10 +165,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 3:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
       function ready() {
@@ -147,19 +186,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     forgetProductById: function () {
       var _forgetProductById = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(product_id) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(product_id) {
         var _this2 = this;
 
         var index;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 //
                 index = _.findIndex(this.products, function (product) {
                   return product.id === product_id;
                 });
-                _context3.next = 3;
+                _context4.next = 3;
                 return Object(_services_products__WEBPACK_IMPORTED_MODULE_1__["destroy"])(product_id).then(function (_ref2) {
                   var data = _ref2.data;
                   //
@@ -170,10 +209,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 3:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
       function forgetProductById(_x) {
@@ -186,20 +225,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function () {
     var _mounted = _asyncToGenerator(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
-              _context4.next = 2;
+              _context5.next = 2;
               return this.ready();
 
             case 2:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
         }
-      }, _callee4, this);
+      }, _callee5, this);
     }));
 
     function mounted() {
@@ -285,6 +324,49 @@ var render = function() {
             "v-layout",
             { attrs: { row: "", wrap: "" } },
             [
+              _c(
+                "v-flex",
+                { staticClass: "pa-3", attrs: { xs12: "" } },
+                [
+                  _c(
+                    "v-toolbar",
+                    { attrs: { flat: "", color: "grey", dark: "" } },
+                    [
+                      _c("v-toolbar-title", [
+                        _vm._v(
+                          "Exibindo " +
+                            _vm._s(_vm.meta.from) +
+                            " de " +
+                            _vm._s(_vm.meta.to) +
+                            " produtos"
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c("v-select", {
+                        staticStyle: { "max-width": "150px" },
+                        attrs: {
+                          items: [5, 10, 15, 50],
+                          "single-line": "",
+                          placeholder: "Total por pagina",
+                          "hide-details": ""
+                        },
+                        model: {
+                          value: _vm.perPage,
+                          callback: function($$v) {
+                            _vm.perPage = $$v
+                          },
+                          expression: "perPage"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
               _vm._l(_vm.products, function(product, index) {
                 return _c(
                   "v-flex",

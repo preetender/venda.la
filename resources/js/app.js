@@ -8,11 +8,12 @@ require("./bootstrap")
 
 window.Vue = require("vue")
 
-// require("./plugins/vuetify")
-
 import App from "./App.vue"
 
+// plugins
 import vuetify from "./plugins/vuetify"
+
+import "./plugins/vuelidate"
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -21,7 +22,7 @@ import vuetify from "./plugins/vuetify"
  */
 
 const app = new Vue({
-    el: "#app",
-    vuetify,
-    render: (h) => h(App)
+  el: "#app",
+  vuetify,
+  render: (h) => h(App)
 })

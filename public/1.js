@@ -14,8 +14,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_products__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/products */ "./resources/js/services/products.js");
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! path */ "./node_modules/path-browserify/index.js");
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_3__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -140,11 +140,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Create",
+  components: {
+    "treeview-categories": function treeviewCategories() {
+      return __webpack_require__.e(/*! import() */ 5).then(__webpack_require__.bind(null, /*! ../components/TreeviewCategories */ "./resources/js/components/TreeviewCategories.vue"));
+    }
+  },
   data: function data() {
     return {
       loading: false,
@@ -156,7 +176,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         images: [],
         children: [],
         kit: false,
-        category_id: "MBL001"
+        category_id: null
       }
     };
   },
@@ -192,6 +212,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return formKit;
     }()
   },
+  computed: {
+    nameErrors: function nameErrors() {
+      var errors = [],
+          ref = this.$v.form["name"];
+      if (!ref.$dirty) return [];
+      !ref.required && errors.push("Informe o nome do produto.");
+      return errors;
+    },
+    priceErrors: function priceErrors() {
+      var errors = [],
+          ref = this.$v.form["price"];
+      if (!ref.$dirty) return [];
+      !ref.required && errors.push("Informe o valor do produto.");
+      return errors;
+    },
+    categoryIdErrors: function categoryIdErrors() {
+      var errors = [],
+          ref = this.$v.form["category_id"];
+      if (!ref.$dirty) return [];
+      !ref.required && errors.push("Informe a categoria do produto.");
+      return errors;
+    }
+  },
+  validations: {
+    form: {
+      name: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_3__["required"]
+      },
+      price: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_3__["required"]
+      },
+      category_id: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_3__["required"]
+      }
+    }
+  },
   methods: {
     /**
      * Cadastrar produto
@@ -211,7 +267,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 this.loading = true; //
 
-                form.kit = form.kit ? 1 : 0;
+                form.kit = form.kit ? 1 : 0; //
+
                 name = form.name, price = form.price, description = form.description, category_id = form.category_id, kit = form.kit, images = form.images, children = form.children, formData = new FormData();
                 formData.append("name", name);
                 formData.append("price", price);
@@ -266,13 +323,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     reset: function reset() {
       this.form = {
         name: "",
-        price: 0,
+        price: "",
         description: "",
         images: [],
         children: [],
         kit: false,
         category_id: ""
-      };
+      }; //
+
+      this.$v.form.$reset();
+    },
+
+    /**
+     * Selecionar categoria do produto.
+     *
+     * @param id
+     */
+    setCategoryProduct: function setCategoryProduct(id) {
+      //
+      this.form.category_id = id; //
+
+      this.$v.form.category_id.$touch();
     },
 
     /**
@@ -294,7 +365,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   var data = _ref.data;
                   _this2.products = data.map(function (h) {
                     // anexar novo campo
-                    h.quantity = 0; //
+                    h.quantity = 1; //
 
                     return h;
                   });
@@ -443,7 +514,7 @@ var render = function() {
                             {
                               attrs: {
                                 type: "submit",
-                                disabled: _vm.loading,
+                                disabled: _vm.loading || _vm.$v.form.$invalid,
                                 loading: _vm.loading,
                                 color: "success",
                                 text: ""
@@ -464,7 +535,12 @@ var render = function() {
                     "v-card-text",
                     [
                       _c("v-text-field", {
-                        attrs: { label: "Nome do produto" },
+                        attrs: {
+                          label: "Produto (*)",
+                          placeholder: "Nome do produto",
+                          "error-messages": _vm.nameErrors
+                        },
+                        on: { input: _vm.$v.form.name.$touch },
                         model: {
                           value: _vm.form.name,
                           callback: function($$v) {
@@ -479,7 +555,12 @@ var render = function() {
                       }),
                       _vm._v(" "),
                       _c("v-text-field", {
-                        attrs: { label: "Preço", type: "number", min: "0" },
+                        attrs: {
+                          label: "Preço (*)",
+                          placeholder: "Valor do produto",
+                          "error-messages": _vm.priceErrors
+                        },
+                        on: { input: _vm.$v.form.price.$touch },
                         model: {
                           value: _vm.form.price,
                           callback: function($$v) {
@@ -650,7 +731,7 @@ var render = function() {
                                                           click: function(
                                                             $event
                                                           ) {
-                                                            child.quantity > 0
+                                                            child.quantity > 1
                                                               ? child.quantity--
                                                               : null
                                                           }
@@ -727,6 +808,10 @@ var render = function() {
                             1
                           )
                         : _vm._e(),
+                      _vm._v(" "),
+                      _c("treeview-categories", {
+                        on: { category: _vm.setCategoryProduct }
+                      }),
                       _vm._v(" "),
                       _c("v-textarea", {
                         attrs: { label: "Descrição do produto", counter: "" },
@@ -892,7 +977,7 @@ function () {
             page = _args.length > 0 && _args[0] !== undefined ? _args[0] : 1;
             perPage = _args.length > 1 && _args[1] !== undefined ? _args[1] : 6;
             _context.next = 4;
-            return axios.get("api/products/?page=".concat(page, "&perPage=").concat(perPage, "&with[children]=*&orderBy[kit]=desc"));
+            return axios.get("api/products/?page=".concat(page, "&paginate=").concat(perPage, "&with[children]=*&orderBy[kit]=desc"));
 
           case 4:
             return _context.abrupt("return", _context.sent);

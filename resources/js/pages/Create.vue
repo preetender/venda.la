@@ -17,7 +17,7 @@
               <v-btn type="button" @click="reset" :disabled="loading" text>Cancelar</v-btn>
               <v-btn
                 type="submit"
-                :disabled="loading"
+                :disabled="loading || $v.form.$invalid"
                 :loading="loading"
                 color="success"
                 text
@@ -29,11 +29,23 @@
           <!-- begin: form -->
           <v-card-text>
             <!-- begin: input -->
-            <v-text-field label="Nome do produto" v-model.trim="form.name" />
+            <v-text-field
+              label="Produto (*)"
+              placeholder="Nome do produto"
+              v-model.trim="form.name"
+              @input="$v.form.name.$touch"
+              :error-messages="nameErrors"
+            />
             <!-- end: input -->
 
             <!-- begin: input -->
-            <v-text-field label="Preço" v-model.trim="form.price" />
+            <v-text-field
+              label="Preço (*)"
+              placeholder="Valor do produto"
+              v-model.trim="form.price"
+              @input="$v.form.price.$touch"
+              :error-messages="priceErrors"
+            />
             <!-- end: input -->
 
             <!-- begin: input-file -->
@@ -105,32 +117,7 @@
             <!-- end: editor-product-child -->
 
             <!-- begin: categorias -->
-            <v-card flat color="transparent">
-              <v-sheet class="pa-2 primary accent-2">
-                <v-text-field
-                  v-model="search"
-                  label="Filtrar categorias"
-                  dark
-                  flat
-                  solo-inverted
-                  hide-details
-                  clearable
-                  clear-icon="mdi-close-circle-outline"
-                />
-              </v-sheet>
-
-              <v-card-text>
-                <v-treeview
-                  activatable
-                  transition
-                  color="orange darken-2"
-                  :active.sync="categoriesActive"
-                  :search="search"
-                  :items="categories"
-                  :load-children="categoriaFilhos"
-                ></v-treeview>
-              </v-card-text>
-            </v-card>
+            <treeview-categories @category="setCategoryProduct" />
             <!-- end: categorias -->
 
             <!-- begin: input -->
@@ -146,21 +133,18 @@
 
 <script>
 import { store, query as productQuery } from "../services/products";
-import {
-  categorias as mlb_categorias,
-  subcategorias as mlb_subcategorias
-} from "../services/mercado_livre";
 import { setTimeout } from "timers";
-import { format } from "path";
+import { required } from "vuelidate/lib/validators";
 export default {
   name: "Create",
 
+  components: {
+    "treeview-categories": () => import("../components/TreeviewCategories")
+  },
+
   data: () => ({
     loading: false,
-    search: null,
     products: [],
-    categories: [],
-    categoriesActive: [],
     form: {
       name: "",
       price: 0,
@@ -182,10 +166,49 @@ export default {
   },
 
   computed: {
-    categoryId() {
-      if (this.categoriesActive.length <= 0) return null;
-      //
-      return this.categoriesActive[0];
+    nameErrors() {
+      let errors = [],
+        ref = this.$v.form["name"];
+
+      if (!ref.$dirty) return [];
+
+      !ref.required && errors.push("Informe o nome do produto.");
+
+      return errors;
+    },
+    priceErrors() {
+      let errors = [],
+        ref = this.$v.form["price"];
+
+      if (!ref.$dirty) return [];
+
+      !ref.required && errors.push("Informe o valor do produto.");
+
+      return errors;
+    },
+    categoryIdErrors() {
+      let errors = [],
+        ref = this.$v.form["category_id"];
+
+      if (!ref.$dirty) return [];
+
+      !ref.required && errors.push("Informe a categoria do produto.");
+
+      return errors;
+    }
+  },
+
+  validations: {
+    form: {
+      name: {
+        required
+      },
+      price: {
+        required
+      },
+      category_id: {
+        required
+      }
     }
   },
 
@@ -199,7 +222,7 @@ export default {
       this.loading = true;
       //
       form.kit = form.kit ? 1 : 0;
-
+      //
       let {
           name,
           price,
@@ -210,13 +233,6 @@ export default {
           children
         } = form,
         formData = new FormData();
-
-      if (!this.categoryId) {
-        alert("Selecione a categoria.");
-      } else {
-        //
-        category_id = this.categoryId;
-      }
 
       formData.append("name", name);
       formData.append("price", price);
@@ -254,13 +270,27 @@ export default {
     reset() {
       this.form = {
         name: "",
-        price: 0,
+        price: "",
         description: "",
         images: [],
         children: [],
         kit: false,
         category_id: ""
       };
+      //
+      this.$v.form.$reset();
+    },
+
+    /**
+     * Selecionar categoria do produto.
+     *
+     * @param id
+     */
+    setCategoryProduct(id) {
+      //
+      this.form.category_id = id;
+      //
+      this.$v.form.category_id.$touch();
     },
 
     /**
@@ -279,51 +309,7 @@ export default {
           });
         })
         .finally(() => (this.loading = false));
-    },
-
-    /**
-     * Carregar categorias.
-     *
-     *
-     */
-    async categorias() {
-      await mlb_categorias().then(response => {
-        //
-        const { data } = response;
-        //
-        this.categories = data.map(category => {
-          //
-          category.children = [];
-          //
-          return category;
-        });
-      });
-    },
-
-    /**
-     * @param category
-     */
-    async categoriaFilhos(category) {
-      //
-      let item = _.find(this.categories, cat => cat.id === category.id);
-      //
-      if (!item) return [];
-      //
-      await mlb_subcategorias(category.id).then(({ data }) => {
-        //
-        item.children = data.children_categories.map(category => {
-          //
-          // category.children = [];
-          //
-          return category;
-        });
-      });
     }
-  },
-
-  async mounted() {
-    // carregar categorias mercado livre brasil.
-    await this.categorias();
   }
 };
 </script>
