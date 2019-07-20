@@ -91,6 +91,12 @@ export default {
           this.products = data;
           this.meta = meta;
         })
+        .catch(error => {
+          if(error.response.status === 403) {
+            //
+            this.$emit("page", "error")
+          }
+        })
         .finally(() => (this.loading = false));
     },
 

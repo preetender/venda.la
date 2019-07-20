@@ -45,7 +45,9 @@
       <v-card-title>{{ item.name }}</v-card-title>
 
       <v-card-text>
-        <div class="my-3 subtitle-1 black--text">R$ {{ item.price }} • {{ item.category_id }}</div>
+        <div
+          class="my-3 subtitle-1 black--text"
+        >R$ {{ item.price }} • {{ item.category_details.name }}</div>
         <div>{{ item.description }}</div>
       </v-card-text>
     </v-card>

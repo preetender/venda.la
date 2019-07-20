@@ -1,5 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Middleware\CheckClientTokenMiddleware;
 
-Route::apiResource('products', 'Api\\Products\\MainController');
+Route::apiResource('products', 'Api\\Products\\MainController')->middleware(CheckClientTokenMiddleware::class);

@@ -259,6 +259,12 @@ export default {
           // limpar campos
           this.reset();
         })
+        .catch(error => {
+          if(error.response.status === 403) {
+            //
+            this.$emit("page", "error")
+          }
+        })
         .finally(() => (this.loading = false));
     },
 

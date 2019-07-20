@@ -4,6 +4,7 @@ namespace App\Support;
 
 final class ApiMercadoLivre
 {
+
   /**
    * Consultar dados da categoria pelo id.
    *
@@ -12,14 +13,18 @@ final class ApiMercadoLivre
    */
   public static function findById($id)
   {
-    $ctx = stream_context_create([
-      'https' => [
-        'header' => 'Accept: application/json'
-      ]
-    ]);
+    $cache = app("cache");
+    //
+    return $cache->remember($id, now()->addHour(), function () use ($id) {
+      $ctx = stream_context_create([
+        'https' => [
+          'header' => 'Accept: application/json'
+        ]
+      ]);
 
-    return json_decode(
-      file_get_contents("https://api.mercadolibre.com/categories/$id", false, $ctx)
-    );
+      return json_decode(
+        file_get_contents("https://api.mercadolibre.com/categories/$id", false, $ctx)
+      );
+    });
   }
 }

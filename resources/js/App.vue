@@ -42,7 +42,8 @@ export default {
 
   components: {
     inicio: () => import("./pages/Home"),
-    cadastro: () => import("./pages/Create")
+    cadastro: () => import("./pages/Create"),
+    error: () => import("./pages/Error")
   },
 
   data: () => ({
